@@ -1,4 +1,60 @@
+```md
 ## Purpose
+Concise, actionable guidance for AI coding agents working in this repo. This file documents the two main code surfaces (static Mercedes-Benz content at repo root and an Expo/React Native app under `A1-ProTech/`), project conventions, and quick commands to preview and validate changes.
+
+## High-level architecture
+- Static content: top-level directories (e.g. `Lighting%20and%20Horns/`, `Windows%20and%20Glass/`, `Wiper%20and%20Washer%20Systems/`) are plain HTML pages intended to be served as a static site. They share global assets referenced with relative paths (e.g. `../../../style.css`). Example page: `Lighting%20and%20Horns/Headlamp%20Switch/index.html`.
+- App workspace: `A1-ProTech/` is an Expo (React Native / Expo Router) project with TypeScript and React components (`A1-ProTech/app/*.tsx`, `A1-ProTech/components/`). It is a separate developer surface (run with `expo start`) and uses its own package.json and node_modules.
+
+## Developer workflows (concrete commands)
+- Preview the static site quickly (macOS / zsh):
+```bash
+cd /Users/scott/Documents/A1-ProTech-MB-v1.0.0
+python3 -m http.server 8000
+# open http://localhost:8000/
+```
+- Work with the Expo app (A1-ProTech):
+```bash
+cd A1-ProTech
+npm install        # install deps (or yarn)
+npm run start      # runs `expo start` (see package.json)
+npm run android|ios|web
+npm run lint       # runs `expo lint`
+```
+- Type-checking: run `npx tsc --noEmit` inside `A1-ProTech/` to validate TypeScript files.
+- Repo-level quick checks: use `grep -R` for patterns (examples below).
+
+## Project-specific conventions and patterns
+- Percent-encoded paths: directory names include URL-encoding for spaces (e.g. `Lighting%20and%20Horns/`). Always preserve percent-encoding in new/renamed folders to avoid breaking links.
+- Relative asset references: many pages expect `style.css` and `script.js` at the repo root (referenced via relative paths such as `../../../style.css`). If these are missing, add them to the repo root rather than changing every page.
+- Header/footer and breadcrumbs: pages repeat header/footer HTML and use relative breadcrumb links. Copy an existing `index.html` when creating new pages and update only the title, breadcrumb parts and content rows.
+- Table and JS hooks: labor/parts tables use `class="labor-times-table"`. Client JS expects `id="expand-all"` and `id="collapse-all"`. Preserve these hooks when changing markup.
+
+## Integration points & external assets
+- Large binary assets (PDFs) are present in the repo — do not modify them in-place.
+- `script.js` (client-side) is responsible for expand/collapse and breadcrumb UX. If you must create it, implement minimal behavior that targets `.labor-times-table`, `#expand-all`, `#collapse-all`, and `.breadcrumbs`.
+- The Expo app depends on Expo/React Native packages; install and run inside `A1-ProTech/`. Do not attempt to run `expo` at the repo root.
+
+## Engineering contract (when editing pages)
+- Inputs: an existing HTML page used as a template or a new content file.
+- Outputs: a new/updated `index.html` using the repo's header/footer, breadcrumb structure, and correct relative paths.
+- Success criteria: renders locally using `python3 -m http.server`, asset references (CSS/JS) resolve without 404s, and labor/parts tables retain required class/id hooks.
+
+## Useful examples & grep patterns
+- Find labor pages: grep -R "labor-times-table" .
+- Find pages referencing the global stylesheet: grep -R "href=\"../../../style.css\"" .
+- Template to copy: `Lighting%20and%20Horns/Headlamp%20Switch/index.html` — preserves breadcrumb and path conventions.
+
+## PR guidance for AI agents
+- Keep PRs small and focused (one topic or one global asset per PR).
+- Make minimal diffs. Prefer copying a sibling `index.html` and changing only the title, breadcrumbs and table rows.
+- If adding `style.css` or `script.js`, put them at repo root so existing relative references work.
+
+## When to ask the maintainer
+- Ask if you need the original theme assets (`style.css` / `script.js`) or a top-level `index.html` to match a canonical theme.
+
+If you want, I can also create a minimal `script.js` and `style.css` that implement the site's expand/collapse and a basic layout — tell me which behavior to prioritize.
+```## Purpose
 Short guidance for AI coding agents working on the A1-ProTech-MB-v1.0.0 repo. Focus on the site's static HTML structure, conventions, and quick local preview/editing tips.
 
 ## Big picture
